@@ -27,5 +27,11 @@ object Main {
     /**
      * Exercise 3
      */
-    def countChange(money: Int, coins: List[Int]): Int = ???
+    def countChange(money: Int, coins: List[Int]): Int = {
+        def innerCount(moneyInner: Int, coinsInner: List[Int]): Int = {
+            if (moneyInner == 0) 1 else countChange(moneyInner, coinsInner.tail) + countChange(moneyInner - coinsInner.head, coinsInner)
+        }
+
+        if (money < 0 || coins.isEmpty) 0 else innerCount(money, coins)
+    }
 }
