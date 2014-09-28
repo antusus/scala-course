@@ -126,4 +126,13 @@ class FunSetSuite extends FunSuite {
             assert(!contains(diff(union(s1, s2), s2), 2), "Intersect 5")
         }
     }
+
+  test("filter elements of set") {
+    new TestSets {
+      assert(contains(filter(s1, (x: Int) => x == 1), 1), "Filter 1")
+      assert(!contains(filter(s1, (x: Int) => x == 2), 1), "Filter 2")
+      assert(contains(filter(union(s1, s2), (x: Int) => x == 2), 2), "Filter 3")
+      assert(!contains(filter(union(s1, s2), (x: Int) => x == 2), 1), "Filter 4")
+    }
+  }
 }
