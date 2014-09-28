@@ -33,21 +33,21 @@ class FunSetSuite extends FunSuite {
         assert(message.take(5) == "hello")
     }
 
-  /**
-   * For ScalaTest tests, there exists a special equality operator "===" that
-   * can be used inside "assert". If the assertion fails, the two values will
-   * be printed in the error message. Otherwise, when using "==", the test
-   * error message will only say "assertion failed", without showing the values.
-   *
-   * Try it out! Change the values so that the assertion fails, and look at the
-   * error message.
-   */
-  test("adding ints") {
-    assert(1 + 2 === 3)
-  }
+    /**
+     * For ScalaTest tests, there exists a special equality operator "===" that
+     * can be used inside "assert". If the assertion fails, the two values will
+     * be printed in the error message. Otherwise, when using "==", the test
+     * error message will only say "assertion failed", without showing the values.
+     *
+     * Try it out! Change the values so that the assertion fails, and look at the
+     * error message.
+     */
+    test("adding ints") {
+        assert(1 + 2 === 3)
+    }
 
 
-    import FunSets._
+    import funsets.FunSets._
 
     test("contains is implemented") {
         assert(contains(x => true, 100))
@@ -127,12 +127,28 @@ class FunSetSuite extends FunSuite {
         }
     }
 
-  test("filter elements of set") {
-    new TestSets {
-      assert(contains(filter(s1, (x: Int) => x == 1), 1), "Filter 1")
-      assert(!contains(filter(s1, (x: Int) => x == 2), 1), "Filter 2")
-      assert(contains(filter(union(s1, s2), (x: Int) => x == 2), 2), "Filter 3")
-      assert(!contains(filter(union(s1, s2), (x: Int) => x == 2), 1), "Filter 4")
+    test("filter elements of set") {
+        new TestSets {
+            assert(contains(filter(s1, (x: Int) => x == 1), 1), "Filter 1")
+            assert(!contains(filter(s1, (x: Int) => x == 2), 1), "Filter 2")
+            assert(contains(filter(union(s1, s2), (x: Int) => x == 2), 2), "Filter 3")
+            assert(!contains(filter(union(s1, s2), (x: Int) => x == 2), 1), "Filter 4")
+        }
     }
-  }
+
+    test("forall checks even number set <-10, 10> are even") {
+        new TestSets {
+            def s: Set = (x: Int) => x >= -10 && x <= 10 && x % 2 == 0
+            assert(forall(s, (v: Int) => v % 2 == 0), "contains even numbers")
+            assert(!forall(s, (v: Int) => v % 2 != 0), "not contains odd numbers")
+        }
+    }
+
+    test("exists checks set <-10, 10>") {
+        new TestSets {
+            def s: Set = (x: Int) => x >= -10 && x <= 10
+            assert(exists(s, (v: Int) => v % 2 == 0), "if there is even number")
+            assert(!exists(s, (v: Int) => v % 2 == 0 && v > 10), "if there is not even number > 10")
+        }
+    }
 }
