@@ -151,4 +151,10 @@ class FunSetSuite extends FunSuite {
             assert(!exists(s, (v: Int) => v % 2 == 0 && v > 10), "if there is not even number > 10")
         }
     }
+
+    test("map transforms set") {
+        new TestSets {
+            assert(forall(map(union(s1, s2), (x: Int) => x + 1), (x: Int) => x == 2 || x == 3))
+        }
+    }
 }
