@@ -63,27 +63,16 @@ object FunSets {
     /**
      * Returns whether there exists a bounded integer within `s`
      * that satisfies `p`.
+     * element does not exists in set `s` if for all elements `p` is not satisfied
+     * so element exists in s if it is not true that for all elements negation of `p` is satisfied
      */
-    def exists(s: Set, p: Int => Boolean): Boolean = {
-        def iter(a: Int): Boolean = {
-            if (a > bound) false
-            else if (forall((x: Int) => x == a, (x: Int) => p(x) && contains(s, x))) true
-            else iter(a + 1)
-        }
-        iter(-bound)
-    }
+    def exists(s: Set, p: Int => Boolean): Boolean = !forall(s, (x) => !p(x) )
 
     /**
      * Returns a set transformed by applying `f` to each element of `s`.
+     * For every `x` in `s` there exists a `y` in `s2` such that y = f(x)
      */
-    def map(s: Set, f: Int => Int): Set = {
-        def iter(oldSet: Set, x: Int): Set = {
-            if (x > bound) oldSet
-            else if (contains(s, x)) iter(union(oldSet, singletonSet(f(x))), x + 1)
-            else iter(oldSet, x + 1)
-        }
-        iter((x: Int) => false, -bound)
-    }
+    def map(s: Set, f: Int => Int): Set = (x: Int) => exists(s, (y: Int) => f(y) == x)
 
     /**
      * Displays the contents of a set
