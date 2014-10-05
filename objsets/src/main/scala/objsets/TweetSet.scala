@@ -7,6 +7,8 @@ import TweetReader._
  * A class to represent tweets.
  */
 class Tweet(val user: String, val text: String, val retweets: Int) {
+  def textContainsAny(keywords: List[String]): Boolean = keywords.exists(keyword => text.contains(keyword))
+
   override def toString: String =
     "User: " + user + "\n" +
       "Text: " + text + " [" + retweets + "]"
@@ -224,15 +226,17 @@ class Cons(val head: Tweet, val tail: TweetList) extends TweetList {
 object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
+  val allTweets = TweetReader.allTweets
 
-  lazy val googleTweets: TweetSet = ???
-  lazy val appleTweets: TweetSet = ???
+  lazy val googleTweets: TweetSet = allTweets.filter((tweet) => tweet.textContainsAny(google))
+  lazy val appleTweets: TweetSet = allTweets.filter((tweet) => tweet.textContainsAny(apple))
+  lazy val googleAndApple: TweetSet = googleTweets.union(appleTweets)
 
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-  lazy val trending: TweetList = ???
+  lazy val trending: TweetList = googleAndApple.descendingByRetweet
 }
 
 object Main extends App {
