@@ -68,7 +68,9 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def mostRetweeted: Tweet = ???
+  def mostRetweeted: Tweet
+
+  def mostRetweetedAcc(current: Tweet): Tweet
 
   /**
    * Returns a list containing all tweets of this set, sorted by retweet count
@@ -79,8 +81,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def descendingByRetweet: TweetList = ???
-
+  def descendingByRetweet: TweetList
 
   /**
    * The following methods are already implemented
@@ -108,6 +109,8 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
+  def isEmpty: Boolean
 }
 
 class Empty extends TweetSet {
@@ -127,14 +130,18 @@ class Empty extends TweetSet {
 
   override def toString: String = "{}"
 
-  /**
-   * This is a helper method for `filter` that propagetes the accumulated tweets.
-   */
+  override def isEmpty: Boolean = true
+
+  override def mostRetweeted: Tweet = throw new NoSuchElementException
+
+  override def mostRetweetedAcc(current: Tweet): Tweet = current
+
+  override def descendingByRetweet: TweetList = Nil
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   override def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
-    def newAcc = if(p(elem)) acc.incl(elem) else acc
+    def newAcc = if (p(elem)) acc.incl(elem) else acc
     def leftAcc = left.filterAcc(p, newAcc)
     right.filterAcc(p, leftAcc)
   }
@@ -166,6 +173,25 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   override def toString: String = "{" + left.toString + elem.user + right.toString + "}"
+
+  override def isEmpty: Boolean = false
+
+  override def mostRetweeted: Tweet = mostRetweetedAcc(elem)
+
+  override def mostRetweetedAcc(current: Tweet): Tweet = {
+    if (isEmpty) current
+    else {
+      val mostPopularTweet = if (current.retweets >= elem.retweets) current else elem
+      val newTheMostPopularTweetLeft: Tweet = left.mostRetweetedAcc(mostPopularTweet)
+      right.mostRetweetedAcc(newTheMostPopularTweetLeft)
+    }
+  }
+
+  override def descendingByRetweet: TweetList = {
+      val tweet = mostRetweeted
+      val without = remove(tweet)
+      new Cons(tweet, without.descendingByRetweet)
+  }
 }
 
 trait TweetList {
