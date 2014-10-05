@@ -72,8 +72,6 @@ abstract class TweetSet {
    */
   def mostRetweeted: Tweet
 
-  def mostRetweetedAcc(current: Tweet): Tweet
-
   /**
    * Returns a list containing all tweets of this set, sorted by retweet count
    * in descending order. In other words, the head of the resulting list should
@@ -136,8 +134,6 @@ class Empty extends TweetSet {
 
   override def mostRetweeted: Tweet = throw new NoSuchElementException
 
-  override def mostRetweetedAcc(current: Tweet): Tweet = current
-
   override def descendingByRetweet: TweetList = Nil
 }
 
@@ -178,21 +174,15 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
   override def isEmpty: Boolean = false
 
-  override def mostRetweeted: Tweet = mostRetweetedAcc(elem)
-
-  override def mostRetweetedAcc(current: Tweet): Tweet = {
-    if (isEmpty) current
-    else {
-      val mostPopularTweet = if (current.retweets >= elem.retweets) current else elem
-      val newTheMostPopularTweetLeft: Tweet = left.mostRetweetedAcc(mostPopularTweet)
-      right.mostRetweetedAcc(newTheMostPopularTweetLeft)
-    }
+  override def mostRetweeted: Tweet = {
+    val filtered: TweetSet = remove(elem).filter(tweet => tweet.retweets > elem.retweets)
+    if (filtered.isEmpty) elem else filtered.mostRetweeted
   }
 
   override def descendingByRetweet: TweetList = {
-      val tweet = mostRetweeted
-      val without = remove(tweet)
-      new Cons(tweet, without.descendingByRetweet)
+    val tweet = mostRetweeted
+    val without = remove(tweet)
+    new Cons(tweet, without.descendingByRetweet)
   }
 }
 
