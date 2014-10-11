@@ -30,6 +30,13 @@ class HuffmanSuite extends FunSuite {
     assert(string2Chars("hello, world") === List('h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'))
   }
 
+  test("should calculate frequency of chars") {
+    assert(times(string2Chars("ala ma")).contains(('a', 3)), "'a' is 3 times")
+    assert(times(string2Chars("ala ma")).contains(('l', 1)), "'l' is 1 time")
+    assert(times(string2Chars("ala ma")).contains((' ', 1)), "' ' is 1 time")
+    assert(times(string2Chars("ala ma")).contains(('m', 1)), "'m' is 1 time")
+  }
+
   test("makeOrderedLeafList for some frequency table") {
     assert(makeOrderedLeafList(List(('t', 2), ('e', 1), ('x', 3))) === List(Leaf('e',1), Leaf('t',2), Leaf('x',3)))
   }
