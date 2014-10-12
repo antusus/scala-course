@@ -37,6 +37,10 @@ class HuffmanSuite extends FunSuite {
     assert(times(string2Chars("ala ma")).contains(('m', 1)), "'m' is 1 time")
   }
 
+    test("should create ordered list of leafs") {
+        assert(makeOrderedLeafList(times(string2Chars("ala"))) === List(new Leaf('a', 2), new Leaf('l', 1)))
+    }
+
   test("makeOrderedLeafList for some frequency table") {
     assert(makeOrderedLeafList(List(('t', 2), ('e', 1), ('x', 3))) === List(Leaf('e',1), Leaf('t',2), Leaf('x',3)))
   }
