@@ -101,7 +101,7 @@ object Huffman {
    * of a leaf is the frequency of the character.
    */
   def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = {
-      freqs.sortBy(pair => (pair._2, pair._1)).reverse.map(pair => new Leaf(pair._1, pair._2))
+      freqs.sortBy(pair => (pair._2, pair._1)).map(pair => new Leaf(pair._1, pair._2))
   }
 
   /**
@@ -121,7 +121,16 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-  def combine(trees: List[CodeTree]): List[CodeTree] = ???
+  def combine(trees: List[CodeTree]): List[CodeTree] = {
+    if(trees.length < 2) trees
+    else {
+      val left = trees.head
+      val right = trees.tail.head
+      val rest = trees.tail.tail
+      val combined: List[CodeTree] = makeCodeTree(left, right) :: rest
+      combined.sortBy(tree => weight(tree))
+    }
+  }
 
   /**
    * This function will be called in the following way:
@@ -140,7 +149,10 @@ object Huffman {
    * the example invocation. Also define the return type of the `until` function.
    * - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
    */
-  def until(xxx: ???, yyy: ???)(zzz: ???): ??? = ???
+  def until(checker: List[CodeTree] => Boolean, combiner: List[CodeTree] => List[CodeTree])(listToCombine: List[CodeTree]): CodeTree = {
+    if(checker(listToCombine)) listToCombine.head
+    else until(checker, combiner)(combiner(listToCombine))
+  }
 
   /**
    * This function creates a code tree which is optimal to encode the text `chars`.
@@ -148,7 +160,9 @@ object Huffman {
    * The parameter `chars` is an arbitrary text. This function extracts the character
    * frequencies from that text and creates a code tree based on them.
    */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  def createCodeTree(chars: List[Char]): CodeTree = {
+    until(singleton, combine)(makeOrderedLeafList(times(chars)))
+  }
 
 
   // Part 3: Decoding
