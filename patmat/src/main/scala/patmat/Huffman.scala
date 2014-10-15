@@ -101,7 +101,7 @@ object Huffman {
    * of a leaf is the frequency of the character.
    */
   def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = {
-      freqs.sortBy(pair => (pair._2, pair._1)).map(pair => new Leaf(pair._1, pair._2))
+    freqs.sortBy(pair => (pair._2, pair._1)).map(pair => new Leaf(pair._1, pair._2))
   }
 
   /**
@@ -122,7 +122,7 @@ object Huffman {
    * unchanged.
    */
   def combine(trees: List[CodeTree]): List[CodeTree] = {
-    if(trees.length < 2) trees
+    if (trees.length < 2) trees
     else {
       val left = trees.head
       val right = trees.tail.head
@@ -150,7 +150,7 @@ object Huffman {
    * - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
    */
   def until(checker: List[CodeTree] => Boolean, combiner: List[CodeTree] => List[CodeTree])(listToCombine: List[CodeTree]): CodeTree = {
-    if(checker(listToCombine)) listToCombine.head
+    if (checker(listToCombine)) listToCombine.head
     else until(checker, combiner)(combiner(listToCombine))
   }
 
@@ -173,7 +173,29 @@ object Huffman {
    * This function decodes the bit sequence `bits` using the code tree `tree` and returns
    * the resulting list of characters.
    */
-  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = ???
+  def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
+    def chooseTree(bit: Bit, left: CodeTree, right: CodeTree): CodeTree = {
+      if(bit == 0) left else right
+    }
+
+    def decodeAcc(currentTree: CodeTree, currentBits: List[Bit], acc: List[Char]): List[Char] = {
+      if (currentBits.length == 0) {
+        currentTree match {
+          case Leaf(char: Char, weight: Int) => char :: acc
+          case Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) =>
+            throw new IllegalArgumentException("Cannot decode message with given tree")
+        }
+      }
+      else {
+        currentTree match {
+          case Leaf(char: Char, weight: Int) => decodeAcc(tree, currentBits, char :: acc)
+          case Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) =>
+            decodeAcc(chooseTree(currentBits.head, left, right), currentBits.tail, acc)
+        }
+      }
+    }
+    decodeAcc(tree, bits, Nil).reverse
+  }
 
   /**
    * A Huffman coding tree for the French language.
@@ -191,7 +213,7 @@ object Huffman {
   /**
    * Write a function that returns the decoded secret
    */
-  def decodedSecret: List[Char] = ???
+  def decodedSecret: List[Char] = decode(frenchCode, secret)
 
 
   // Part 4a: Encoding using Huffman tree
