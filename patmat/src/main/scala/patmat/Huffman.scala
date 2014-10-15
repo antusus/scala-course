@@ -175,7 +175,7 @@ object Huffman {
    */
   def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
     def chooseTree(bit: Bit, left: CodeTree, right: CodeTree): CodeTree = {
-      if(bit == 0) left else right
+      if (bit == 0) left else right
     }
 
     def decodeAcc(currentTree: CodeTree, currentBits: List[Bit], acc: List[Char]): List[Char] = {
@@ -222,7 +222,27 @@ object Huffman {
    * This function encodes `text` using the code tree `tree`
    * into a sequence of bits.
    */
-  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+
+    def encodeChar(currentTree: CodeTree, currentChar: Char, acc: List[Bit]): List[Bit] = {
+      currentTree match {
+        case Leaf(char: Char, weight: Int) => acc
+        case Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) =>
+          val bit: Bit = if (Huffman.chars(left).contains(currentChar)) 0 else 1
+          encodeChar(if (bit == 0) left else right, currentChar, bit :: acc)
+      }
+    }
+
+    def encodeAcc(currentText: List[Char], acc: List[Bit]): List[Bit] = {
+      if (currentText.isEmpty) acc
+      else {
+        val encoded: List[Bit] = encodeChar(tree, currentText.head, acc)
+        encodeAcc(currentText.tail, encoded)
+      }
+    }
+
+    encodeAcc(text, Nil).reverse
+  }
 
 
   // Part 4b: Encoding using code table
