@@ -60,4 +60,21 @@ class HuffmanSuite extends FunSuite {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
+
+  test("convert CodeTree to CodeTable") {
+    assert(convert(createCodeTree(string2Chars("ala"))) == List(('l', List(0)), ('a', List(1))))
+  }
+
+  test("get bit representation of char using code table") {
+    assert(codeBits(convert(createCodeTree(string2Chars("ala"))))('a') == List(1))
+  }
+  test("quick encode message") {
+    new TestTrees {
+      assert(quickEncode(t2)(string2Chars("adab")) == List(0, 0, 1, 0, 0, 0, 1))
+    }
+  }
+
+  test("quick encode secret message") {
+    assert(quickEncode(frenchCode)(string2Chars("huffmanestcool")) == secret)
+  }
 }
