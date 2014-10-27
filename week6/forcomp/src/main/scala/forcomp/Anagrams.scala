@@ -59,10 +59,16 @@ object Anagrams {
       * List(('a', 1), ('e', 1), ('t', 1)) -> Seq("ate", "eat", "tea")
       *
       */
-    lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] = ???
+    lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] = {
+        dictionary.foldLeft(Map[Occurrences, List[Word]]().withDefault(elem => Nil))((acc, word) => {
+            val occurrences: Occurrences = wordOccurrences(word)
+            val wordList: List[Word] = acc.apply(occurrences)
+            acc.updated(occurrences, word :: wordList)
+        })
+    }
 
     /** Returns all the anagrams of a given word. */
-    def wordAnagrams(word: Word): List[Word] = ???
+    def wordAnagrams(word: Word): List[Word] = dictionaryByOccurrences.apply(wordOccurrences(word))
 
     /** Returns the list of all subsets of the occurrence list.
       * This includes the occurrence itself, i.e. `List(('k', 1), ('o', 1))`
@@ -95,7 +101,8 @@ object Anagrams {
         def combineWithAcc(touples: List[Occurrences], acc: List[Occurrences]): List[Occurrences] = {
             acc match {
                 case Nil => Nil
-                case _ => for (occurance <- acc; touple <- touples) yield occurance ::: touple
+                case _ => for (occurance <- acc;
+                               touple <- touples) yield occurance ::: touple
             }
         }
 
@@ -126,7 +133,7 @@ object Anagrams {
         val mapx = x.toMap
         y.foldLeft(mapx)((acc, entry) => {
             val occurance: Int = mapx.apply(entry._1)
-            if(occurance == entry._2) acc - entry._1
+            if (occurance == entry._2) acc - entry._1
             else acc.updated(entry._1, occurance - entry._2)
         }).toList.sortBy(touple => touple._1)
     }
