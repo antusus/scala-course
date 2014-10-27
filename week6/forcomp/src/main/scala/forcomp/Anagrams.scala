@@ -92,17 +92,20 @@ object Anagrams {
             for (i <- List.range(1, occurrance._2 + 1)) yield List((occurrance._1, i))
         }
 
+        def combineWithAcc(touples: List[Occurrences], acc: List[Occurrences]): List[Occurrences] = {
+            acc match {
+                case Nil => Nil
+                case _ => for (occurance <- acc; touple <- touples) yield occurance ::: touple
+            }
+        }
+
         def combine(current: Occurrences, acc: List[Occurrences]): List[Occurrences] = {
             current match {
                 case Nil => current :: acc
-                case List(head, tail) => {
+                case head :: tail => {
                     val tuples: List[Occurrences] = generateFor(head)
-                    val combined: List[Occurrences] = Nil
-                    combine(current.tail, tuples ::: combined ::: acc)
-                }
-                case List(head) => {
-                    val tuples: List[Occurrences] = generateFor(head)
-                    combine(current.tail, tuples ::: acc)
+                    val combined: List[Occurrences] = combineWithAcc(tuples, acc)
+                    combine(tail, tuples ::: combined ::: acc)
                 }
             }
         }
