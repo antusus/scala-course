@@ -32,7 +32,7 @@ object Anagrams {
       * same character, and are represented as a lowercase character in the occurrence list.
       */
     def wordOccurrences(w: Word): Occurrences = {
-        w.toLowerCase()
+        w.toLowerCase
             .groupBy(char => char)
             .map { case (char: Char, str: String) => (char, str.length)}
             .toList
@@ -101,8 +101,7 @@ object Anagrams {
         def combineWithAcc(touples: List[Occurrences], acc: List[Occurrences]): List[Occurrences] = {
             acc match {
                 case Nil => Nil
-                case _ => for (occurance <- acc;
-                               touple <- touples) yield occurance ::: touple
+                case _ => for (occurance <- acc; touple <- touples) yield occurance ::: touple
             }
         }
 
@@ -178,6 +177,20 @@ object Anagrams {
       *
       * Note: There is only one anagram of an empty sentence.
       */
-    def sentenceAnagrams(sentence: Sentence): List[Sentence] = ???
+    def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
+        val allOccurrences: Occurrences = sentenceOccurrences(sentence)
+
+        def generateSentencesStartingWith(sentence: Sentence, occurrence: Occurrences): List[Sentence] = {
+            occurrence match {
+                case Nil => List(sentence)
+                case _ => combinations(occurrence).foldLeft(List[Sentence]())((acc, combination) => {
+                    val words: List[Word] = dictionaryByOccurrences.apply(combination)
+                    words.foldLeft(acc)((acc1, word) => generateSentencesStartingWith(word :: sentence, subtract(occurrence, combination)) ::: acc1)
+                })
+            }
+        }
+
+        generateSentencesStartingWith(List(), allOccurrences)
+    }
 
 }

@@ -8,4 +8,7 @@ object Experiment {
         if(occurance == entry._2) acc - entry._1
         else acc.updated(entry._1, occurance - entry._2)
     }).toList.sortBy(touple => touple._1)
+
+    val list = List[String]()
+    Nil :: (Nil :: list)
 }

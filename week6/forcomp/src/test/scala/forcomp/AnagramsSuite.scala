@@ -1,88 +1,94 @@
 package forcomp
 
-import org.scalatest.FunSuite
-
+import forcomp.Anagrams._
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-
-import Anagrams._
 
 @RunWith(classOf[JUnitRunner])
 class AnagramsSuite extends FunSuite {
 
-  test("wordOccurrences: abcd") {
-    assert(wordOccurrences("abcd") === List(('a', 1), ('b', 1), ('c', 1), ('d', 1)))
-  }
+      test("wordOccurrences: abcd") {
+        assert(wordOccurrences("abcd") === List(('a', 1), ('b', 1), ('c', 1), ('d', 1)))
+      }
 
-  test("wordOccurrences: Robert") {
-    assert(wordOccurrences("Robert") === List(('b', 1), ('e', 1), ('o', 1), ('r', 2), ('t', 1)))
-  }
-
-
-
-  test("sentenceOccurrences: abcd e") {
-    assert(sentenceOccurrences(List("abcd", "e")) === List(('a', 1), ('b', 1), ('c', 1), ('d', 1), ('e', 1)))
-  }
+      test("wordOccurrences: Robert") {
+        assert(wordOccurrences("Robert") === List(('b', 1), ('e', 1), ('o', 1), ('r', 2), ('t', 1)))
+      }
 
 
 
-  test("dictionaryByOccurrences.get: eat") {
-    assert(dictionaryByOccurrences.get(List(('a', 1), ('e', 1), ('t', 1))).map(_.toSet) === Some(Set("ate", "eat", "tea")))
-  }
+      test("sentenceOccurrences: abcd e") {
+        assert(sentenceOccurrences(List("abcd", "e")) === List(('a', 1), ('b', 1), ('c', 1), ('d', 1), ('e', 1)))
+      }
 
 
 
-  test("word anagrams: married") {
-    assert(wordAnagrams("married").toSet === Set("married", "admirer"))
-  }
-
-  test("word anagrams: player") {
-    assert(wordAnagrams("player").toSet === Set("parley", "pearly", "player", "replay"))
-  }
+      test("dictionaryByOccurrences.get: eat") {
+        assert(dictionaryByOccurrences.get(List(('a', 1), ('e', 1), ('t', 1))).map(_.toSet) === Some(Set("ate", "eat", "tea")))
+      }
 
 
 
-  test("subtract: lard - r") {
-    val lard = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
-    val r = List(('r', 1))
-    val lad = List(('a', 1), ('d', 1), ('l', 1))
-    assert(subtract(lard, r) === lad)
-  }
+      test("word anagrams: married") {
+        assert(wordAnagrams("married").toSet === Set("married", "admirer"))
+      }
 
-  test("subtract: larrd - r") {
-    val larrd = List(('a', 1), ('d', 1), ('l', 1), ('r', 2))
-    val r = List(('r', 1))
-    val lard = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
-    assert(subtract(larrd, r) === lard)
-  }
+      test("word anagrams: player") {
+        assert(wordAnagrams("player").toSet === Set("parley", "pearly", "player", "replay"))
+      }
 
 
 
-  test("combinations: []") {
-    assert(combinations(Nil) === List(Nil))
-  }
+      test("subtract: lard - r") {
+        val lard = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
+        val r = List(('r', 1))
+        val lad = List(('a', 1), ('d', 1), ('l', 1))
+        assert(subtract(lard, r) === lad)
+      }
 
-  test("combinations: abba") {
-    val abba = List(('a', 2), ('b', 2))
-    val abbacomb = List(
-      List(),
-      List(('a', 1)),
-      List(('a', 2)),
-      List(('b', 1)),
-      List(('a', 1), ('b', 1)),
-      List(('a', 2), ('b', 1)),
-      List(('b', 2)),
-      List(('a', 1), ('b', 2)),
-      List(('a', 2), ('b', 2))
-    )
-    assert(combinations(abba).toSet === abbacomb.toSet)
-  }
+      test("subtract: larrd - r") {
+        val larrd = List(('a', 1), ('d', 1), ('l', 1), ('r', 2))
+        val r = List(('r', 1))
+        val lard = List(('a', 1), ('d', 1), ('l', 1), ('r', 1))
+        assert(subtract(larrd, r) === lard)
+      }
+
+
+
+      test("combinations: []") {
+        assert(combinations(Nil) === List(Nil))
+      }
+
+      test("combinations: abba") {
+        val abba = List(('a', 2), ('b', 2))
+        val abbacomb = List(
+          List(),
+          List(('a', 1)),
+          List(('a', 2)),
+          List(('b', 1)),
+          List(('a', 1), ('b', 1)),
+          List(('a', 2), ('b', 1)),
+          List(('b', 2)),
+          List(('a', 1), ('b', 2)),
+          List(('a', 2), ('b', 2))
+        )
+        assert(combinations(abba).toSet === abbacomb.toSet)
+      }
 
 
 
     test("sentence anagrams: []") {
         val sentence = List()
         assert(sentenceAnagrams(sentence) === List(Nil))
+    }
+
+    test("sentence anagrams: Linux ") {
+        val sentence = List("Linux")
+        val anas = List(
+            List("Linux")
+        )
+        assert(sentenceAnagrams(sentence).toSet === anas.toSet)
     }
 
     test("sentence anagrams: Linux rulez") {
@@ -111,5 +117,4 @@ class AnagramsSuite extends FunSuite {
         )
         assert(sentenceAnagrams(sentence).toSet === anas.toSet)
     }
-
 }
