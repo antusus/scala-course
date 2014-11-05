@@ -53,6 +53,19 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+  test("block is standing") {
+    new Level1{
+      assert(Block(Pos(0,0), Pos(0,0)).isStanding)
+    }
+  }
+
+  test("block is not standing") {
+    new Level1{
+      assert(Block(Pos(0,0), Pos(0,1)).isStanding === false)
+      assert(Block(Pos(2,2), Pos(2,3)).isStanding === false)
+    }
+  }
+
   test("optimal solution for level 1") {
     new Level1 {
       assert(solve(solution) == Block(goal, goal))
