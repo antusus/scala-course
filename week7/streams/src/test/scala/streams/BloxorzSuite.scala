@@ -66,6 +66,32 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+  test("block inside of terrain is legal") {
+    new Level1{
+      assert(Block(Pos(0,0), Pos(0,0)).isLegal, "0,0;0,0 is legal")
+      assert(Block(Pos(2,5), Pos(2,6)).isLegal, "2,5;2,6 is legal")
+    }
+  }
+
+  test("block outside of terrain is legal") {
+    new Level1{
+      assert(Block(Pos(0,3), Pos(0,4)).isLegal === false, "0,3;0,4 is not legal")
+      assert(Block(Pos(0,2), Pos(0,3)).isLegal === false, "0,2;0,3 is not legal")
+      assert(Block(Pos(0,3), Pos(0,3)).isLegal === false, "0,3;0,3 is not legal")
+      assert(Block(Pos(2,0), Pos(3,0)).isLegal === false, "2,0;3,0 is not legal")
+    }
+  }
+
+  test("create block at starting position") {
+    new Level1 {
+      val blockAtStart = startBlock
+      assert(blockAtStart.b1.x === 1, "b1.x === 1")
+      assert(blockAtStart.b1.y === 1, "b1.y === 1")
+      assert(blockAtStart.b2.x === 1, "b2.x === 1")
+      assert(blockAtStart.b2.y === 1, "b2.y === 1")
+    }
+  }
+
   test("optimal solution for level 1") {
     new Level1 {
       assert(solve(solution) == Block(goal, goal))
