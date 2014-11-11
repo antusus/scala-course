@@ -113,6 +113,42 @@ class BloxorzSuite extends FunSuite {
         }
     }
 
+    test("level is solved") {
+        new Level1 {
+            assert(!done(Block(Pos(0, 0), Pos(0, 0))), "should not be done")
+            assert(done(Block(Pos(4, 7), Pos(4, 7))), "should be done")
+        }
+    }
+
+    test("find neighbours with history") {
+        new Level1 {
+            assert(
+                neighborsWithHistory(Block(Pos(1, 1), Pos(1, 1)), List(Left, Up)) ===
+                    Set(
+                        (Block(Pos(1, 2), Pos(1, 3)), List(Right, Left, Up)),
+                        (Block(Pos(2, 1), Pos(3, 1)), List(Down, Left, Up))
+                    ).toStream
+            )
+        }
+    }
+
+    test("find new neighbours only") {
+        new Level1 {
+            assert(
+                newNeighborsOnly(
+                    Set(
+                        (Block(Pos(1, 2), Pos(1, 3)), List(Right, Left, Up)),
+                        (Block(Pos(2, 1), Pos(3, 1)), List(Down, Left, Up))
+                    ).toStream,
+                    Set(Block(Pos(1, 2), Pos(1, 3)), Block(Pos(1, 1), Pos(1, 1)))
+                ) ===
+                    Set(
+                        (Block(Pos(2, 1), Pos(3, 1)), List(Down, Left, Up))
+                    ).toStream
+            )
+        }
+    }
+
     test("optimal solution for level 1") {
         new Level1 {
             assert(solve(solution) == Block(goal, goal))
