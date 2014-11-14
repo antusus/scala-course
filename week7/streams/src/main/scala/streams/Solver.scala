@@ -8,7 +8,7 @@ trait Solver extends GameDef {
   /**
    * Returns `true` if the block `b` is at the final position
    */
-  def done(b: Block): Boolean = b.isStanding && b.b1 == goal
+  def done(b: Block): Boolean = b.isStanding && b.b1.x == goal.x && b.b1.y == goal.y
 
   /**
    * This function takes two arguments: the current block `b` and
@@ -28,7 +28,9 @@ trait Solver extends GameDef {
    */
   def neighborsWithHistory(b: Block, history: List[Move]): Stream[(Block, List[Move])] = {
     def createNeighbourWithHistory(touple: (Block, Move)): (Block, List[Move]) = (touple._1, touple._2 :: history)
-    b.legalNeighbors.map(neighbour => createNeighbourWithHistory(neighbour)).toStream
+    val legalNeighbors: List[(Block, Move)] = b.legalNeighbors
+    if (legalNeighbors.isEmpty) Stream.empty
+    else legalNeighbors.map(neighbour => createNeighbourWithHistory(neighbour)).toStream
   }
 
   /**
@@ -38,8 +40,8 @@ trait Solver extends GameDef {
    */
   def newNeighborsOnly(neighbors: Stream[(Block, List[Move])], explored: Set[Block]): Stream[(Block, List[Move])] = {
     if (explored.isEmpty) neighbors
-    else neighbors.filter(touple => explored.head != touple._1)
-}
+    else neighbors.filter(touple => !explored.contains(touple._1))
+  }
 
   /**
    * The function `from` returns the stream of all possible paths
