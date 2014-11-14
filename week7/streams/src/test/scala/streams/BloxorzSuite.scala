@@ -115,8 +115,9 @@ class BloxorzSuite extends FunSuite {
 
     test("level is solved") {
         new Level1 {
-            assert(!done(Block(Pos(0, 0), Pos(0, 0))), "should not be done")
-            assert(done(Block(Pos(4, 7), Pos(4, 7))), "should be done")
+            assert(!done(Block(Pos(0, 0), Pos(0, 0))), "standing block on not finish place should not be done")
+            assert(!done(Block(Pos(4, 7), Pos(4, 8))), "not standing block touching finish place should not be done")
+            assert(done(Block(Pos(4, 7), Pos(4, 7))), "block standing on finish place should be done")
         }
     }
 
@@ -146,6 +147,13 @@ class BloxorzSuite extends FunSuite {
                         (Block(Pos(2, 1), Pos(3, 1)), List(Down, Left, Up))
                     ).toStream
             )
+        }
+    }
+
+    test("from") {
+        new Level1 {
+            private val paths: Stream[(Block, List[Move])] = from(List((startBlock, List.empty)).toStream, Set(startBlock))
+            paths.take(5).foreach(println(_))
         }
     }
 
