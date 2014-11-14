@@ -67,10 +67,13 @@ trait Solver extends GameDef {
    * construct the correctly sorted stream.
    */
   def from(initial: Stream[(Block, List[Move])], explored: Set[Block]): Stream[(Block, List[Move])] = {
-    val headOfInitial: (Block, List[Move]) = initial.head
-    val allNeighboursOfHead: Stream[(Block, List[Move])] = neighborsWithHistory(headOfInitial._1, headOfInitial._2)
-    val newNeighboursOfHead: Stream[(Block, List[Move])] = newNeighborsOnly(allNeighboursOfHead, explored)
-    newNeighboursOfHead #::: from(initial.tail #::: newNeighboursOfHead, explored + headOfInitial._1)
+    if (initial.isEmpty) Stream.empty
+    else {
+      val headOfInitial: (Block, List[Move]) = initial.head
+      val allNeighboursOfHead: Stream[(Block, List[Move])] = neighborsWithHistory(headOfInitial._1, headOfInitial._2)
+      val newNeighboursOfHead: Stream[(Block, List[Move])] = newNeighborsOnly(allNeighboursOfHead, explored)
+      newNeighboursOfHead #::: from(initial.tail #::: newNeighboursOfHead, explored + headOfInitial._1)
+    }
   }
 
   /**
